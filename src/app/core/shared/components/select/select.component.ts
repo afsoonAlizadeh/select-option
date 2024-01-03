@@ -16,6 +16,7 @@ import {
 export class SelectComponent {
   @Input() noFocus: boolean = false;
   @Input() spinner: boolean = false;
+  @Input() list: any[] = [];
 
   constructor(private el: ElementRef<HTMLElement>) {}
 
