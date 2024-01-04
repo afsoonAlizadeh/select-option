@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { User } from '../../shared/services/model/user';
 import { UserService } from '../../shared/services/user/user.service';
@@ -10,6 +11,7 @@ import { UserService } from '../../shared/services/user/user.service';
 })
 export class DashboardComponent implements OnInit {
   userList!: User[];
+  selectedValue: KeyValue<string, string> = { key: 'id', value: 'name' };
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
