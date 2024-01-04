@@ -1,5 +1,5 @@
     <div class="wrapper">
-        <input type="text" name="search" autocomplete="off webauthn" [placeholder]="placeholder">
+        <input type="text" name="search" autocomplete="off webauthn" [placeholder]="placeholder" [(ngModel)]="search">
         <button (click)="toggleOpen()">
             <div *ngIf="open;else content">
                 <i class="fa fa-angle-up"></i>
@@ -9,14 +9,9 @@
             </ng-template>
         </button>
         
-        <div class="results" [ngClass]="open?'show':'hidden'"
-        >
-            <ul>
-                <li *ngFor="let item of list;trackby:trackByKey" [value]="item.key">{{item.value}}</li>
+        <div class="results" [ngClass]="open?'show':'hidden'">
+            <ul class="search-results" (scroll)="onScroll($event)">
+                <li *ngFor="let item of list; trackBy:trackByKey" [value]="item.key">{{item.value}}</li>
             </ul>
         </div>
     </div>
-
-<!-- <ul>
-    <li *ngFor="let item of list" [value]="item.key">{{item.value}}</li>
-</ul> -->

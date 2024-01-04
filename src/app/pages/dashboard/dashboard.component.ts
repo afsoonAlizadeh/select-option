@@ -10,8 +10,10 @@ import { UserService } from '../../shared/services/user/user.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class DashboardComponent implements OnInit {
-  userList!: User[];
+  userList: User[] = [];
   selectedValue: KeyValue<string, string> = { key: 'id', value: 'name' };
+  searchKey: string = '';
+
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
@@ -19,12 +21,20 @@ export class DashboardComponent implements OnInit {
   }
 
   get users(): User[] {
-    return this.userList;
+    const key = this.searchKey.trim().toLowerCase();
+
+    return this.userList.filter((user) => {
+      return user.name.toLowerCase().includes(key);
+    });
   }
 
   fetchUsers() {
     this.userService.fetchUsers().subscribe((users) => {
       this.userList = users;
     });
+  }
+
+  search(e: string) {
+    this.searchKey = e;
   }
 }
