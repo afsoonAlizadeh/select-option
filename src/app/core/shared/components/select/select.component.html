@@ -1,17 +1,22 @@
-    <div class="wrapper">
-        <input type="text" name="search" autocomplete="off webauthn" [placeholder]="placeholder" [(ngModel)]="search">
-        <button (click)="toggleOpen()">
-            <div *ngIf="open;else content">
-                <i class="fa fa-angle-up"></i>
-            </div>
-            <ng-template #content>
-                <i class="fa fa-angle-down"></i>
-            </ng-template>
-        </button>
-        
-        <div class="results" [ngClass]="open?'show':'hidden'">
-            <ul class="search-results" (scroll)="onScroll($event)">
-                <li *ngFor="let item of list; trackBy:trackByKey" [value]="item.key">{{item.value}}</li>
-            </ul>
+<div class="wrapper">
+    <input type="text" name="search" autocomplete="off webauthn" [placeholder]="placeholder" [value]="selectUser" multiple>
+    <button (click)="toggleOpen()">
+        <div *ngIf="open;else content">
+            <i class="fa fa-angle-up"></i>
         </div>
+        <ng-template #content>
+            <i class="fa fa-angle-down"></i>
+        </ng-template>
+    </button>
+        
+    <div class="results" [ngClass]="open?'show':'hidden'">
+        <ul class="search-results" (scroll)="onScroll($event)">
+            <li *ngFor="let item of getList; trackBy:trackByKey" [value]="item.key">
+                <input type="checkbox" [id]="item.key" [name]="item.value" [value]="item">
+                <label [for]="item.key">
+                    {{item.value}}
+                </label>
+            </li>
+        </ul>
     </div>
+</div>

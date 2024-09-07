@@ -1,1 +1,1 @@
-<app-select [initialList]="users" [selectedValue]="selectedValue" (searchChange)="search($event)"></app-select>
+<app-select [list]="users" [selectedValue]="selectedValue" (searchChange)="search($event)" (scrollChange)="takeData()"></app-select>

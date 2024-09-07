@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable, switchMap, take } from 'rxjs';
 import { User } from '../model/user';
 
 @Injectable({
@@ -11,23 +11,26 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  fetchUsers() {
+  fetchUsers(count: number = 20, scroll: number = 1) {
     return new Observable<User[]>((subscriber) => {
-      this.http.get<User[] | null>(`${this.apiUrl}./user.json`).subscribe({
-        next: (users) => {
-          if (!users) {
-            subscriber.error();
+      this.http
+        .get<User[] | null>(`${this.apiUrl}./user.json`)
+        .pipe(map((obj) => obj!.slice(0)))
+        .subscribe({
+          next: (users) => {
+            if (!users) {
+              subscriber.error();
+              subscriber.complete();
+              return;
+            }
+            subscriber.next(users);
             subscriber.complete();
-            return;
-          }
-          subscriber.next(users);
-          subscriber.complete();
-        },
-        error: (error) => {
-          subscriber.error(error);
-          subscriber.complete();
-        },
-      });
+          },
+          error: (error) => {
+            subscriber.error(error);
+            subscriber.complete();
+          },
+        });
     });
   }
 }

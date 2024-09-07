@@ -21,18 +21,28 @@ export class SelectComponent implements OnInit {
   @Input() noFocus: boolean = false;
   @Input() spinner: boolean = false;
   @Input() placeholder: string = 'choose an option';
-  @Input() initialList: any[] = [];
+
+  initialList: any[] = [];
+  @Input() set list(value: any[]) {
+    this.initialList = value;
+    this.getList;
+  }
+
   @Input() selectedValue!: KeyValue<string, string>;
 
-  search: string = '';
   @Output() searchChange = new EventEmitter<string>();
 
   loadMore = 1;
   counter = 20;
   userList: KeyValue<string, string>[] = [];
-  isScroll = false;
+
+  scroll = false;
+  @Output() scrollChange = new EventEmitter<boolean>();
+
   isOne = true;
   isChecked = false;
+
+  isSelected: KeyValue<string, string>[] = [];
 
   constructor() {}
 
@@ -42,29 +52,47 @@ export class SelectComponent implements OnInit {
   open = false;
 
   @HostListener('input') logChange() {
-    this.searchChange.emit(this.search);
+    if ((<HTMLInputElement>event!.target).type != 'checkbox') {
+      this.loadMore = 1;
+      this.isOne = true;
+      this.searchChange.emit((<HTMLInputElement>event!.target).value);
+    }
+
+    const selectedUser: KeyValue<string, string> = {
+      key: (<HTMLInputElement>event!.target).id!,
+      value: (<HTMLInputElement>event!.target).name!,
+    };
+
+    if ((<HTMLInputElement>event!.target).checked!) {
+      this.isSelected.push(selectedUser);
+    } else {
+      this.isSelected = this.isSelected.filter(
+        (item) => item.key !== selectedUser.key
+      );
+    }
   }
 
   currentPosition = window.pageYOffset;
   @HostListener('window:wheel', ['$event']) onScroll(e: any) {
-    const total = this.initialList.length / 20;
+    const total = this.getList.length / this.counter;
     if (
       e.deltaY >= this.currentPosition &&
       this.loadMore <= total &&
-      !this.isScroll
+      !this.scroll
     ) {
       this.loadMore++;
-      this.isScroll = true;
+      this.scroll = true;
+      this.scrollChange.emit(this.scroll);
       timer(500).subscribe(() => {
         this.isOne = false;
         this.isChecked = true;
-        this.isScroll = false;
+        this.scroll = false;
         e.preventDefault();
       });
     }
   }
 
-  get list(): { key: any; value: any }[] {
+  get getList(): { key: any; value: any }[] {
     return this.users;
   }
 
@@ -77,6 +105,7 @@ export class SelectComponent implements OnInit {
   }
 
   get users() {
+    if (this.initialList.length === 0) this.userList = [];
     if (this.isOne === true) {
       this.userList = this.filteredUser;
       return this.userList;
@@ -96,12 +125,19 @@ export class SelectComponent implements OnInit {
     }));
   }
 
+  get selectUser() {
+    if (this.isSelected.length != 0) {
+      return this.isSelected.map((v) => v.value);
+    }
+    return '';
+  }
+
   trackByKey(index: number) {
     return this.users ? this.users[index] : 0;
   }
 
   toggleOpen() {
     this.open = !this.open;
-    this.list;
+    this.getList;
   }
 }

@@ -37,4 +37,6 @@ export class DashboardComponent implements OnInit {
   search(e: string) {
     this.searchKey = e;
   }
+
+  takeData() {}
 }
